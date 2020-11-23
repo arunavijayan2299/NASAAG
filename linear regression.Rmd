@@ -1,0 +1,115 @@
+---
+title: "lab20-11-2019"
+author: "Aruna vijayan"
+date: "20/11/2019"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1.Import the dataset data_marketing_budget_mo12 and do the exploratory data analysis.
+```{r}
+library(dplyr)
+library(lattice)
+library(ggplot2)
+```
+```{r}
+markettingbudget <- read.csv("C:/Users/aruna/Downloads/data-marketing-budget-12mo.csv")
+markettingbudget
+```
+2.Use Scatter Plot To Visualise The Relationship
+```{r}
+plot=ggplot(markettingbudget, aes(x = Spend, y = Sales)) +geom_point()
+plot
+```
+INTERPRETATION:
+
+From the scatter plot we can observe a linear relationship between the sales and spend. We
+can observe that when the spend increases the sales also increases. Therfore Sales is the
+dependent and spend is the independent variable.
+
+3.Using BoxPlot To Check For Outliers
+```{r}
+name=c("Spend","Sales")
+boxplot(markettingbudget$Spend,markettingbudget$Sales,main="Spend vs Sales")
+```
+INTERPRETATION:
+
+From the above boxplot we could't find the outliers therefore the values are close to others.
+
+
+4. Using Density Plot To Check If Response Variable Is Close To Normal
+```{r}
+plot(density(markettingbudget$Sales))
+```
+INTERPRETATION:
+
+The response variable Sales is approximately close to normal distribution as the density
+plot shows a bell shaped structure.
+
+
+4. Check the Correlation Analysis
+
+
+
+```{r}
+cor(markettingbudget$Spend, markettingbudget$Sales)
+```
+```{r}
+
+```
+INTERPRETATION:
+From the correlation analysis we obtained that the correlation value is 0.99 and it is highly
+positively correlated and the degree of linear independence is high. Increase or decrease in
+Spend has a siginificant effect on Sales.
+
+
+5. Build the Linear Regression Model
+```{r}
+lmodel=lm(Sales~ Spend,data = markettingbudget)
+lmodel
+```
+7.Capture the summary of the linear model
+```{r}
+summary(lmodel)
+```
+
+INTERPRETATION:
+
+Null Hypothesis: Not statistically significant Alt Hypothesis: Statistically significant The p
+value obtained is 1.707e-14 which is clearly less than the significant value 0.05 therefore
+we are rejectin the null hypothesis and the linear regression model is statistically
+siginificant.
+```{r}
+summary(lmodel)
+```
+
+INTERPRETATION:
+The summary which gives all the statistical  details of the data.
+
+
+
+```{r}
+par(mfrow = c(2,2))
+plot(lmodel)
+```
+INTERPRETATION:
+
+1. Residuals vs Fitted: The first plot (residuals vs. fitted values) is a simple scatterplot
+between residuals and predicted values. We can observe that it is less randomness
+between the residual and fitted values.Therfore we can say that there is a linear
+relationship between the response and outcome.The model data are simulated in a way
+that meets the regression assumptions very well.
+2. Normal Q-Q: This plot shows if residuals are normally distributed and from the plot
+we can see that the residuals are normally distributed.
+3. Scale-Location: It’s also called Spread-Location plot. This plot shows if residuals are
+spread equally along the ranges of predictors. This is how you can check the
+assumption of equal variance. In this case the residuals appears to be randomely
+spread.Therefore we can say that the residuals are spread equally among the predictor
+variables.
+
+4. residual Vs Leverage This is used to find the influence of the variables. here be can see
+the cook line only little therefore the residulas are inside the cooks line with only a
+little influence.

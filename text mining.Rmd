@@ -1,0 +1,116 @@
+---
+title: "Text mining"
+author: "Aruna vijayan"
+date: "11/02/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("NLP")
+
+
+```
+
+
+```{r}
+ install.packages("tm")
+```
+```{r}
+ install.packages("RColorBrewer")
+```
+
+```{r}
+install.packages("wordcloud2")
+```
+```{r}
+install.packages("wordcloud")
+```
+
+```{r}
+library(NLP)
+```
+```{r}
+library(tm)
+```
+```{r}
+library(wordcloud)
+```
+```{r}
+library(wordcloud2)
+```
+```{r}
+library(RColorBrewer)
+```
+
+```{r}
+filePath <- "C:/Users/aruna/Downloads/Text Analytics.txt"
+```
+
+```{r}
+text_file <- readLines(filePath)
+```
+
+```{r}
+head(text_file)
+```
+```{r}
+text_file1 <- paste(text_file, collapse = " ")
+head(text_file1)
+```
+```{r}
+clean_text <- tolower(text_file1)
+head(clean_text)
+```
+```{r}
+clean_text1 <- gsub(pattern = "\\W", replace = " " ,clean_text)
+head(clean_text1)
+```
+```{r}
+clean_text2 <- gsub(pattern = "\\d", replace = " ", clean_text1)
+head(clean_text2)
+```
+```{r}
+stopwords()
+```
+```{r}
+clean_text3 <- removeWords(clean_text2,words = c(stopwords(),"ai","â"))
+head(clean_text3)
+```
+```{r}
+clean_text4 <- gsub(pattern = "\\b[A-z]\\b{1}", replace = " ",
+clean_text3 )
+head(clean_text4)
+```
+```{r}
+clean_text5 <- stripWhitespace(clean_text4)
+head(clean_text4)
+```
+```{r}
+clean_text6 <- strsplit(clean_text5, " ")
+head(clean_text6)
+```
+```{r}
+class(clean_text6)
+```
+
+```{r}
+word_cloud <- unlist(clean_text6)
+```
+```{r}
+wordcloud(word_cloud)
+```
+```{r}
+wordcloud(word_cloud,min.freq = 5 , random.order = FALSE, scale=c(3, 0.5))
+```
+```{r}
+wordcloud(word_cloud,min.freq = 3, max.words=1000, random.order=F,
+rot.per=0.2, colors=brewer.pal(5, "Dark2"), scale=c(4,0.2))
+```
+
+
+
+

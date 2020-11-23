@@ -1,0 +1,162 @@
+---
+title: "lab 16-01-2020"
+author: "Aruna vijayan"
+date: "16/01/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+View(iris)
+```
+
+injecting missing values to the original dataset
+```{r}
+set.seed(86)
+
+iris[sample(1:nrow(iris), 5), "Sepal.Width"] <- NA
+
+iris[sample(1:nrow(iris), 10), "Petal.Length"] <- NA
+
+iris[sample(1:nrow(iris), 8), "Sepal.Length"] <- NA
+```
+
+view the missing values in the original dataset
+```{r}
+View(iris)
+```
+how to identify the missing values
+```{r}
+is.na(iris)
+```
+function to get percentage of missing value
+```{r}
+nrow(iris[!complete.cases(iris), ])/nrow(iris)*100
+```
+interpretation :
+we can calculate the persentage of null values that are presented in the iris dataset.
+
+q.identify which variables and what percentage of observations from
+each variable are missing.
+```{r}
+library(mice)
+```
+```{r}
+install.packages("mice")
+```
+```{r}
+md.pattern(iris)
+```
+
+
+
+
+
+Replacing the missing values(NA or others) using different methods 
+one of those method is by Using impute function from Hmisc package,
+```{r}
+install.packages("Hmisc")
+```
+```{r}
+library(Hmisc)
+```
+
+removing the missing values using Hmisc package
+method 1:
+
+```{r}
+impute(iris$Sepal.Length, mean)
+```
+interpretation: this replacement is done using the null values are replaced using the mean values.
+
+method 2:
+
+```{r}
+impute(iris$Sepal.Length, median)
+```
+interpretation:
+in this method we replace the null values by median value.
+
+when the mice function from the package it automatically detects the variables which have missing values.
+Once detected, the missing values are then replaced by Predictive Mean Matching (PMM), this is a default method.
+```{r}
+imputed_iris <- mice(iris, m=5, method = 'pmm', seed = 101)
+imputed_iris
+```
+interpretation:
+imputing the missing values using mice,which will defaultly detect the missing values and replace it.
+```{r}
+summary(imputed_iris)
+```
+interpretation:
+summary of all the imputed null values using mice.
+
+checking for the imputed values,
+```{r}
+imputed_iris$imp
+```
+
+we can also use machine learning algorithms to checking and replace or remove the missing values in the given data set.
+such methods are:
+
+```{r}
+iris <- iris[complete.cases(iris), ]
+iris <- na.omit(iris)
+iris
+```
+interpretation: deleted all the null values that are presented in our dataset.
+
+injecting null values again;
+
+```{r}
+set.seed(86)
+
+iris[sample(1:nrow(iris), 5), "Sepal.Width"] <- NA
+
+iris[sample(1:nrow(iris), 10), "Petal.Length"] <- NA
+
+iris[sample(1:nrow(iris), 8), "Sepal.Length"] <- NA
+
+iris
+```
+
+```{r}
+install.packages("bnstruct")
+```
+
+```{r}
+library(bnstruct)
+iris=as.data.frame(lapply(iris, as.numeric))
+iris
+```
+using KNN classification method:
+```{r}
+library(VIM)
+df23=kNN(iris,variable=("Sepal.Length"),k=5)
+df23$Sepal.Length_impute=NA
+df23$Sepal.Width_impute=NA
+df23
+```
+```{r}
+knn.impute(iris, k = 4, cat.var = 1:ncol(iris), to.impute = 1:nrow(iris), using = 1:nrow(iris))
+```
+```{r}
+nrow(iris)
+```
+```{r}
+get_numbers <- function(iris) {
+    iris[toupper(iris) != tolower(iris)] <- NA
+    return(as.double(as.character(iris)))
+}
+get_numbers
+```
+```{r}
+iris=as.data.frame(lapply(iris, as.double))
+iris
+```
+
