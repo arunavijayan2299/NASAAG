@@ -1,0 +1,119 @@
+---
+title: "r project"
+author: "Aruna vijayan"
+date: "04/03/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(data.table)
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(pROC)
+library(caret)
+library(corrplot)
+library(glmnet)
+library(Rtsne)
+library(xgboost)
+
+library(caTools)
+library(corrplot)
+library(rpart)
+library(rpart.plot)
+
+```
+
+```{r}
+install.packages("ROCR")
+```
+
+```{r}
+library(ROCR) 
+```
+
+```{r}
+install.packages("randomForest")
+```
+
+```{r}
+library(randomForest)
+```
+
+
+```{r}
+creditcard_data <- read.csv("C:/Users/aruna/Downloads/creditcards.csv")
+creditcard_data
+```
+
+```{r}
+summary(creditcard_data)
+```
+
+```{r}
+set.seed(123)
+split = sample.split(creditcard_data$Time, SplitRatio = 0.7)
+train = subset(creditcard_data, split==TRUE)
+train
+test = subset(creditcard_data, split==FALSE)
+test
+```
+
+```{r}
+tree = rpart(Time~ Amount+Class , data=train)
+prp(tree)
+```
+
+```{r}
+tree.pred = predict(tree, newdata=test)
+tree.sse = sum((tree.pred - test$Time)^2)
+tree.sse
+```
+
+```{r}
+#sampling 80% training data
+traindata <- sample(seq_len(nrow(creditcard_data)), size = floor(0.80 * nrow(creditcard_data)))
+data_train <- creditcard_data[traindata, ]
+data_test <- creditcard_data[-traindata,]
+t_train <- creditcard_data$Time[traindata]
+t_test <- creditcard_data$Time[-traindata]
+```
+
+```{r}
+display<-list(data_train,data_test,t_train,t_test)
+head(display)
+```
+
+```{r}
+set.seed(12345)
+knn_train_test<-display
+again_train<-knn_train_test[[1]]
+again_test<-knn_train_test[[2]]
+
+
+```
+
+```{r}
+library(e1071)
+```
+
+
+```{r}
+set.seed(123)
+classifier = svm(formula =Time ~ .,data = train, type
+= 'C-classification',kernel = 'linear')
+```
+
+```{r}
+test_pred = predict(classifier, newdata = test)
+confusionMatrix(test_pred, test$Amount )
+```
+
+```{r}
+plot(creditcard_data$)
+```
+
