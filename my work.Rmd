@@ -1,0 +1,512 @@
+---
+title: "Course Work"
+author: "Aruna Vijayan"
+date: '2022-06-23'
+output: word_document
+---
+```{r}
+##importing common packages
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+###importing  date and time series packages
+library(lubridate)
+library(tseries)
+library(car)
+```
+
+
+```{r}
+###importing input ,output signal  and time data
+input_data <- read.csv("C:/Users/Admin/Documents/Course Work/course work 1/X.csv",header = TRUE)
+output_data <- read.csv("C:/Users/Admin/Documents/Course Work/course work 1/y.csv")
+times_data <- read.csv("C:/Users/Admin/Documents/Course Work/course work 1/time.csv")
+```
+
+combaining  output signal  and input signal
+
+```{r}
+
+full_data <-cbind(input_data,output_data)
+full_data
+```
+converting data to time series,with interval of 10 secs
+
+```{r}
+ 
+timeseries <- ts(full_data,end=20,frequency = 10,start = 0.1)
+head(timeseries)
+```
+converting the time series data to dataframe structure
+selecting column y,x2, x1 ,
+filtering values for x2= 0 i.e neutral audio
+time series plotting 
+
+```{r}
+timeseries_data0 <-as.data.frame(timeseries)%>%filter(x2=='0')%>%ts(start = 0.1,end=10,frequency = 10) %>% plot(type='b',col='blue',main='timeseries pot of input signal and output signal')
+timeseries_data0
+```
+converting the time series data to dataframe structure
+selecting column y,x2, x1 ,
+filtering values for x2= 1 i.e emotional audio
+time series ploting 
+
+```{r}
+timeseries_data1 <-as.data.frame(timeseries)%>%filter(x2=='1')%>%ts(start = 10.1,end=20,frequency = 10) %>% plot(type='b',col='blue',main='timeseries pot of input signal and output signal')
+timeseries_data1
+```
+
+
+```{r}
+
+distribution0=as.data.frame(timeseries)%>%
+  filter(x2=='0')%>% ##filtering values for x2== 0,neutral audio
+  select(y,x1)#selecting column y x1 , input signal,output signal
+```
+
+```{r}
+distribution0
+```
+
+
+```{r}
+distribution1=as.data.frame(timeseries)%>%
+  filter(x2=='1')%>% ##filtering values for x2== 1,emotional audio
+  select(y,x1)#selecting column y x1 , input signal,output signal
+distribution1
+```
+```{r}
+par(mfrow=c(2,1))
+hist(distribution0$y,xlab = 'output',main = ' histogram of input_signal',col = 'purple')
+hist(distribution0$x1,xlab = 'input',main = ' histogram of input_signal',col = 'black')
+par(mfrow=c(1,1))
+```
+
+
+
+```{r}
+
+par(mfrow=c(2,1))
+hist(distribution1$y,xlab = 'output',main = ' histogram of output_signal',col = 'purple')
+hist(distribution1$x1,xlab = 'input',main = ' histogram of input_signal',col = 'black')
+par(mfrow=c(1,1))
+```
+
+```{r}
+hist(full_data$y,xlab = 'output data',main = ' histogram of input_signal',col = 'green')
+```
+
+```{r}
+########correlationship
+library(corrplot)
+correlation0 <- cor(distribution0)
+corrplot::corrplot(corr =correlation0,bg = "red",method = "pie",
+                   title = " correlation plot of input and output signal")
+```
+
+```{r}
+corrplot(cor(distribution0),method = "square",type = "upper",t1.col="black",t1.cex=2,col = colorRampPalette(c("purple","dark green"))(200))
+```
+
+```{r}
+corrplot.mixed(cor(distribution0),upper = "square",lower = "number",addgrid.col="black",t1.col="black")
+```
+
+```{r}
+corrplot.mixed(cor(distribution0),upper = "pie",lower = "number",addgrid.col="black",t1.col="black")
+```
+
+
+```{r}
+cor(distribution0)
+```
+
+```{r}
+correlation1 <- cor(distribution1)
+corrplot::corrplot(corr =correlation1,bg = "red",method = "pie",
+                   title = " correlation plot of input and output signal")
+```
+
+```{r}
+cor(distribution1)
+```
+
+```{r}
+corrplot.mixed(cor(distribution1),upper = "square",lower = "number",addgrid.col="black",t1.col="black")
+```
+
+
+```{r}
+#scatterplot of distribution0
+distribution0 %>% plot(type='p',main ='scatter plot of input signaland output signal  ',col = 'red',xlab='input_signal',ylab='output_signal')
+
+
+```
+
+```{r}
+#####scatter plot
+distribution1 %>% plot(type='p',main ='scatter plot of input signaland output signal  ',col = 'blue',xlab='input_signal',ylab='output_signal')
+```
+
+```{r}
+###boxplot
+boxplot(full_data$y,main ='box plot of output signal  ',col = 'red',ylab='output_sgnal')
+```
+
+```{r}
+boxplot(distribution0$y,main ='box plot of output signal  ',col = 'red',ylab='output_sgnal')
+```
+
+```{r}
+boxplot(distribution1$y,main ='box plot of output signal  ',col = 'red',ylab='output_sgnal')
+```
+
+
+
+Task 2 : Regression
+2.1
+
+```{r}
+regression_data <- as.data.frame(full_data)
+regression_data
+```
+
+
+```{r}
+
+#models
+#input values
+value_1=regression_data$x1
+value_2=regression_data$x1^2
+value_3=regression_data$x1^3
+value_4=regression_data$x1^4
+value_5=regression_data$x1^5
+
+```
+
+```{r}
+#values of x2
+input_x2=regression_data$x2
+```
+
+```{r}
+output=as.matrix(output_data)
+head(output)
+```
+
+model 1
+```{r}
+
+reg_model_1 <-data.frame(input0=c(1),value_3,value_5,input_x2)#creating a dataframe for model 1
+reg_mdl_1 <- as.matrix(reg_model_1)##converting dataframe to matrix
+head(reg_mdl_1)
+regmodel_1 <- solve(t(reg_mdl_1)%*%reg_mdl_1)%*%t(reg_mdl_1)%*%output#estimating the values of parameters using the list square method
+head(regmodel_1)
+```
+Model 2
+
+```{r}
+reg_model_2 <-data.frame(input0=c(1),value_1,input_x2)#creating a dataframe for model 2
+reg_mdl_2 <- as.matrix(reg_model_2)##converting dataframe to matrix
+head(reg_mdl_2)
+regmodel_2 <- solve(t(reg_mdl_2)%*%reg_mdl_2)%*%t(reg_mdl_2)%*%output#estimating the values of parameters using the list square method
+head(regmodel_2)
+```
+model 3
+```{r}
+reg_model_3 <-data.frame(input0=c(1),value_1,value_2,value_4,input_x2)#creating a dataframe for model 3
+reg_mdl_3 <- as.matrix(reg_model_3)##converting dataframe to matrix
+head(reg_mdl_3)
+regmodel_3 <- solve(t(reg_mdl_3)%*%reg_mdl_3)%*%t(reg_mdl_3)%*%output#estimating the values of parameters using the list square method
+head(regmodel_3)
+```
+model 4
+```{r}
+reg_model_4 <-data.frame(input0=c(1),value_1,value_2,value_3,value_5,input_x2)#creating a dataframe for model 4
+reg_mdl_4 <- as.matrix(reg_model_4)##converting dataframe to matrix
+head(reg_mdl_4)
+regmodel_4 <- solve(t(reg_mdl_4)%*%reg_mdl_4)%*%t(reg_mdl_4)%*%output#estimating the values of parameters using the list square method
+head(regmodel_4)
+```
+
+model 5
+```{r}
+reg_model_5 <-data.frame(input0=c(1),value_1,value_3,value_4,input_x2)#creating a dataframe for model 5
+reg_mdl_5 <- as.matrix(reg_model_5)##converting dataframe to matrix
+head(reg_mdl_5)
+regmodel_5 <- solve(t(reg_mdl_5)%*%reg_mdl_5)%*%t(reg_mdl_5)%*%output#estimating the values of parameters using the list square method
+head(regmodel_5)
+```
+Task 2.2
+
+model 1 residual_1
+```{r}
+
+residual_1 <- norm((output-(reg_mdl_1%*%regmodel_1))^2)
+residual_1
+
+```
+model 2 residual_2
+```{r}
+residual_2 <- norm((output-(reg_mdl_2%*%regmodel_2))^2)
+residual_2
+```
+model 3 residual_3
+```{r}
+residual_3 <- norm((output-(reg_mdl_3%*%regmodel_3))^2)
+residual_3
+```
+model 4 residual_4
+
+```{r}
+residual_4 <- norm((output-(reg_mdl_4%*%regmodel_4))^2)
+residual_4
+```
+model 5 residual_5
+
+```{r}
+residual_5 <- norm((output-(reg_mdl_5%*%regmodel_5))^2)
+residual_5
+```
+TASK2.3 LOGlikehood function##########################
+
+loglikehood 1
+```{r}
+loglike_1 <- -(nrow(output)/2*log(2*pi))-(nrow(output)/2*(log(residual_1/(nrow(output)-1))))-residual_1*(1/(2*(residual_1/(nrow(output)-1))))
+head(loglike_1)
+```
+```{r}
+#loglikehood 2
+loglike_2 <- -(nrow(output)/2*log(2*pi))-(nrow(output)/2*(log(residual_2/(nrow(output)-1))))-residual_2*(1/(2*(residual_2/(nrow(output)-1))))
+loglike_2
+```
+
+```{r}
+#loglikehood 3
+loglike_3 <- -(nrow(output)/2*log(2*pi))-(nrow(output)/2*(log(residual_3/(nrow(output)-1))))-residual_3*(1/(2*(residual_3/(nrow(output)-1))))
+loglike_3
+```
+
+```{r}
+#loglikehood 4
+loglike_4 <- -(nrow(output)/2*log(2*pi))-(nrow(output)/2*(log(residual_4/(nrow(output)-1))))-residual_4*(1/(2*(residual_4/(nrow(output)-1))))
+loglike_4
+```
+
+
+```{r}
+
+#loglikehood 5
+loglike_5 <- -(nrow(output)/2*log(2*pi))-(nrow(output)/2*(log(residual_5/(nrow(output)-1))))-residual_5*(1/(2*(residual_5/(nrow(output)-1))))
+loglike_5
+```
+TASK 2.4 AIK AND BIC  aikek information criterion/bayesian information criterion
+k=number of parameter estimated
+
+model 1 AIK AND BIC
+```{r}
+length(regmodel_1)
+length(regmodel_2)
+length(regmodel_3)
+length(regmodel_4)
+length(regmodel_5)
+```
+
+
+```{r}
+
+k1=4
+data_AIC_1 <- 2*k1-(2*loglike_1)
+data_AIC_1
+data_BIC_1 <- k1*log(nrow(output))-(2*(loglike_1))
+data_BIC_1
+
+
+```
+
+```{r}
+#model 2 AIC AND BIC
+k2=3
+data_AIC_2 <- 2*k2-(2*loglike_2)
+data_AIC_2
+data_BIC_2 <- k2*log(nrow(output))-(2*(loglike_2))
+data_BIC_2
+
+
+```
+
+```{r}
+#model 3 AIC AND BIC
+k3=5
+data_AIC_3 <- 2*k3-(2*loglike_3)
+data_AIC_3
+data_BIC_3 <- k3*log(nrow(output))+(2*(loglike_3))
+data_BIC_3
+
+```
+
+```{r}
+
+#model 4 AIC AND BIC
+k4=6
+data_AIC_4 <- 2*k4-(2*loglike_4)
+data_AIC_4
+data_BIC_4 <- k4*log(nrow(output))+(2*(loglike_4))
+data_BIC_4
+
+```
+
+```{r}
+
+#model 5 AIC AND BIC
+k5=5
+data_AIC_5 <- 2*k5-(2*loglike_5)
+data_AIC_5
+data_BIC_5 <- k5*log(nrow(output))+(2*(loglike_5))
+data_BIC_5
+```
+```{r}
+error1=(output-(reg_mdl_1%*%regmodel_1))
+head(error1)
+```
+
+```{r}
+error2=(output-(reg_mdl_2%*%regmodel_2))
+head(error2)
+```
+
+```{r}
+error3=(output-(reg_mdl_3%*%regmodel_3))
+head(error3)
+```
+
+```{r}
+error4=(output-(reg_mdl_4%*%regmodel_4))
+head(error4)
+```
+
+```{r}
+error5=(output-(reg_mdl_5%*%regmodel_5))
+head(error5)
+```
+
+```{r}
+qqnorm(error1)
+qqline(error1, col = 2)
+
+```
+residuals tend to stray from the line quite a bit near the tails, which could indicate that they’re not normally distributed.
+
+```{r}
+qqnorm(error2)
+qqline(error2, col = 2)
+
+```
+
+```{r}
+qqnorm(error3)
+qqline(error3, col = 2)
+```
+
+```{r}
+qqnorm(error4)
+qqline(error4, col = 2)
+```
+
+```{r}
+qqnorm(error5)
+qqline(error5, col = 2)
+```
+
+
+```{r}
+set.seed(123)
+same_data<-sample(1:200,140) #Taking sample of 140 rows
+head(same_data)
+
+```
+
+
+```{r}
+train_data<-regression_data[same_data,]
+head(train_data)
+
+```
+
+
+```{r}
+test_data<-regression_data[-same_data,]
+head(test_data)
+```
+
+```{r}
+splitted_data<-data.frame(input0=c(1),train_data$x1,train_data$x1^2,train_data$x1^4,train_data$x2)
+split_data<- as.matrix(splitted_data)
+head(split_data)
+```
+
+```{r}
+y_out<-train_data$y
+y_out<-as.matrix(y_out)
+```
+
+```{r}
+rr_model<-solve(t(split_data)%*%split_data)%*%t(split_data)%*%y_out
+rr_model
+```
+```{r}
+sum_split<-sum(split_data)/length(y_out)
+sum_split
+```
+
+```{r}
+prediction<-sum_split*test_data
+head(prediction)
+```
+
+```{r}
+square_root<-sqrt(var(prediction$y))
+square_root
+```
+
+```{r}
+mean_predict<-mean(prediction$y)
+mean_predict
+```
+
+```{r}
+paste('Confidence Interval',mean_predict-1.96*square_root/sqrt(nrow(test_data)),mean_predict+1.96*square_root/sqrt(nrow(test_data)))
+std1<-sqrt(var(prediction$x1))
+std1
+```
+
+```{r}
+mean_value<-mean(prediction$x1)
+mean_value
+```
+
+```{r}
+paste('Confidence Interval',mean_value-1.96*std1/sqrt(nrow(test_data)),mean_value+1.96*std1/sqrt(nrow(test_data)))
+```
+
+```{r}
+the_error<-test_data$y-prediction$y
+head(the_error)
+error_rate<-test_data$y+prediction$y
+head(error_rate)
+```
+
+```{r}
+lower_bound<-the_error
+upper_bound<-error_rate
+predict_test_out<-test_data$y
+```
+
+```{r}
+prediction %>% ggplot(aes(x1,y))+geom_errorbar(ymin=lower_bound,ymax=upper_bound)+ geom_point(aes(x1),col='Red') +geom_point(aes(x1,predict_test_out),col='Yellow')+ggtitle('Confidence Error Bar Plot')+theme(plot.title = element_text(hjust = 0.5))+xlab('Input Data Set') + ylab('Output Data Set')
+```
+
+```{r}
+
+```
+
